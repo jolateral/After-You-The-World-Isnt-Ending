@@ -14,7 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DailyRoutine
   season: 0
   steps:
-  - timeOfDay: 3
-    waypointName: Waypoint1
+  - timeOfDay: 0.1
+    waypointName: N_Waypoint
+    animationTrigger: 
+    broadcastEvent: 
+  - timeOfDay: 0.2
+    waypointName: N_Waypoint (1)
+    animationTrigger: 
+    broadcastEvent: 
+  - timeOfDay: 0.3
+    waypointName: N_Waypoint (2)
+    animationTrigger: 
+    broadcastEvent: 
+  - timeOfDay: 0.4
+    waypointName: N_Waypoint (3)
     animationTrigger: 
     broadcastEvent: 

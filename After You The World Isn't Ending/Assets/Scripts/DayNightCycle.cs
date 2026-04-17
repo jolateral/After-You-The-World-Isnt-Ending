@@ -3,27 +3,53 @@ using UnityEngine;
 public class DayNightCycle : MonoBehaviour
 {
     [Tooltip("Time in minutes for a full day cycle")]
-    public float minutesPerRotation = 3f;
+    public float minutesPerDay = 3f;
 
-    // This is your "Game Clock" (0.0 to 1.0)
     public static float TimeOfDay { get; private set; }
 
-    private float rotationDegrees;
+    bool running = false;
+
+    void OnEnable()
+    {
+        if (DayManager.Instance != null)
+        {
+            DayManager.Instance.onDayBegan.AddListener(OnDayBegan);
+            DayManager.Instance.onDayEnded.AddListener(OnDayEnded);
+        }
+    }
+
+    void OnDisable()
+    {
+        DayManager.Instance?.onDayBegan.RemoveListener(OnDayBegan);
+        DayManager.Instance?.onDayEnded.RemoveListener(OnDayEnded);
+    }
+
+    void Start()
+    {
+        OnDayBegan();
+    }
+
+    void OnDayBegan()
+    {
+        TimeOfDay = 0f;
+        transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
+        running = true;
+    }
+
+    void OnDayEnded()
+    {
+        running = false;
+    }
 
     void Update()
     {
-        float degreesPerSecond = 360f / (minutesPerRotation * 60f);
-        float amountToRotate = degreesPerSecond * Time.deltaTime;
+        if (!running) return;
 
-        // 1. Rotate the light
-        transform.Rotate(Vector3.right * amountToRotate, Space.World);
+        float secondsPerDay = minutesPerDay * 60f;
+        float delta = Time.deltaTime / secondsPerDay;
+        TimeOfDay = Mathf.Clamp01(TimeOfDay + delta);
 
-        // 2. Track total rotation (0 to 360)
-        rotationDegrees += amountToRotate;
-        if (rotationDegrees >= 360f) rotationDegrees -= 360f;
-
-        // 3. Convert to a 0-1 scale for your DailyRoutine
-        // We use (rotation / 360) to get a percentage of the day passed
-        TimeOfDay = rotationDegrees / 360f;
+        float angle = TimeOfDay * 360f - 90f;
+        transform.rotation = Quaternion.Euler(angle, 0f, 0f);
     }
 }
